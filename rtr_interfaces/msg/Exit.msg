@@ -1,0 +1,4 @@
+uint8 FAULTED_EXIT=0
+uint8 NOMINAL_EXIT=1
+
+uint8 exit

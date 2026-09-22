@@ -1,0 +1,9 @@
+{
+    // Replaces (not extends) the list in .devcontainer/devcontainer.json,
+    // so the first two entries must stay.
+    "python.analysis.extraPaths": [
+        "/opt/ros/jazzy/lib/python3.12/site-packages/",
+        "/ws/install/lib/python3.12/site-packages/",
+        "/ws/src/rtr_testing/rtr_core/"
+    ]
+}

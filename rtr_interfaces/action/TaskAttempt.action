@@ -1,0 +1,12 @@
+SerializedData goal_params
+Metric[] metrics
+Constraint[] constraints
+
+---
+
+Exit exit
+SerializedData effect
+
+---
+
+SerializedData feedback
