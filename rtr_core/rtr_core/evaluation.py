@@ -1,33 +1,26 @@
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-
-from enum import IntEnum
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 from dataclasses import dataclass
 
+from rtr_interfaces.msg import Assessment as AssessmentMsg, Outcome, ConstraintEvaluation, TaskSpecification
+
 from .execution import StateVar
-
-
-class Outcome(IntEnum):
-    FAILURE = -1
-    INDETERMINATE = 0
-    SUCCESS = 1
-
-
-class ConstraintStatus(IntEnum):
-    VIOLATED = -1
-    UPHELD = 1
 
 
 class Observation(ABC): ...
 
 
-class Metric(ABC):
+TMetricParams = TypeVar("TMetricParams", bound=BaseModel)
+
+
+class Metric(ABC, Generic[TMetricParams]):
     registry: dict[str, type["Metric"]] = {}
     name: str
-    ParamModel: type[BaseModel]
-    params: BaseModel
+    ParamModel: type[TMetricParams]
+    params: TMetricParams
 
     def __init_subclass__(cls):
         if not hasattr(cls, "name"):
@@ -47,7 +40,7 @@ class Metric(ABC):
         return Metric.registry[name](data)
 
     @abstractmethod
-    def evaluate(self, observation: Observation) -> Outcome: ...
+    def evaluate(self, observation: Observation) -> int: ...
 
 
 class Constraint(ABC):
@@ -73,14 +66,17 @@ class Constraint(ABC):
         return stage in self._active_stages
 
     @abstractmethod
-    def evaluate(self, observation: Observation) -> ConstraintStatus: ...
+    def evaluate(self, observation: Observation) -> int: ...
 
 
-class TaskMeasures(ABC):
+TGoalParams = TypeVar("TGoalParams", bound=BaseModel)
+
+
+class TaskMeasures(ABC, Generic[TGoalParams]):
     registry: dict[str, type["TaskMeasures"]] = {}
     name: str
-    GoalParamModel: type[BaseModel]
-    goal_params: BaseModel
+    GoalParamModel: type[TGoalParams]
+    goal_params: TGoalParams
 
     def __init_subclass__(cls):
         if not hasattr(cls, "name"):
@@ -105,8 +101,25 @@ class TaskMeasures(ABC):
 
 @dataclass
 class Assesment:
-    metric_status: dict[str, Outcome]
-    constraint_status: dict[str, ConstraintStatus]
+    metric_status: dict[str, int]
+    constraint_status: dict[str, int]
+
+    @property
+    def violated(self) -> bool:
+        return any(status == ConstraintEvaluation.VIOLATED for status in self.constraint_status.values())
+
+    def is_complete(self, policy: int) -> bool:
+        if policy == TaskSpecification.COMPLETE_ON_ANY_METRIC:
+            return any(outcome == Outcome.SUCCESS for outcome in self.metric_status.values())
+        if policy == TaskSpecification.COMPLETE_ON_ALL_METRICS:
+            return all(outcome == Outcome.SUCCESS for outcome in self.metric_status.values())
+        return False
+
+    def to_msg(self) -> AssessmentMsg:
+        msg = AssessmentMsg()
+        msg.metrics = [Outcome(name=name, outcome=outcome) for name, outcome in self.metric_status.items()]
+        msg.constraints = [ConstraintEvaluation(name=name, status=status) for name, status in self.constraint_status.items()]
+        return msg
 
 
 class TaskAssessor:

@@ -1,12 +1,12 @@
-SerializedData goal_params
-Metric[] metrics
-Constraint[] constraints
+TaskSpecification specification
 
 ---
 
 Exit exit
 SerializedData effect
+Assessment assessment
 
 ---
 
 SerializedData feedback
+Assessment assessment

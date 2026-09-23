@@ -1,0 +1,13 @@
+navigate_client:
+  ros__parameters:
+    within_radius:
+      radius: 0.25
+    pose_tolerance:
+      position_tolerance: 0.1
+      heading_tolerance: 0.1
+    settled_velocity:
+      speed_threshold: 0.02
+      angular_velocity_threshold: 0.05
+      dwell_seconds: 0.5
+    time_limit:
+      max_seconds: 60.0

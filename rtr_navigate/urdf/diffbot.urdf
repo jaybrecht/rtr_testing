@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!-- A minimal differential drive robot: a box chassis, two driven wheels and a
+     caster. Dimensions here must match the wheel_radius and wheel_separation
+     parameters of the sim node, or the wheels will visibly slip. -->
+<robot name="diffbot">
+
+  <material name="slate">
+    <color rgba="0.25 0.32 0.40 1.0"/>
+  </material>
+  <material name="charcoal">
+    <color rgba="0.12 0.12 0.14 1.0"/>
+  </material>
+  <material name="amber">
+    <color rgba="0.95 0.61 0.16 1.0"/>
+  </material>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0.05"/>
+      <geometry>
+        <box size="0.35 0.25 0.10"/>
+      </geometry>
+      <material name="slate"/>
+    </visual>
+  </link>
+
+  <!-- Points along +x so the robot's heading is obvious in RViz. -->
+  <link name="nose">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.02" length="0.12"/>
+      </geometry>
+      <material name="amber"/>
+    </visual>
+  </link>
+
+  <joint name="nose_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="nose"/>
+    <origin xyz="0.20 0 0.05"/>
+  </joint>
+
+  <link name="left_wheel">
+    <visual>
+      <origin rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+      <material name="charcoal"/>
+    </visual>
+  </link>
+
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="0 0.115 0.05"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="right_wheel">
+    <visual>
+      <origin rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+      <material name="charcoal"/>
+    </visual>
+  </link>
+
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin xyz="0 -0.115 0.05"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="caster">
+    <visual>
+      <geometry>
+        <sphere radius="0.025"/>
+      </geometry>
+      <material name="charcoal"/>
+    </visual>
+  </link>
+
+  <joint name="caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster"/>
+    <origin xyz="-0.13 0 0.025"/>
+  </joint>
+
+</robot>

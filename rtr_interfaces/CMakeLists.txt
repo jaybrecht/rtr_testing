@@ -15,9 +15,14 @@ set(action_files
 )
 
 set(msg_files
+  "msg/Assessment.msg"
   "msg/Constraint.msg"
+  "msg/ConstraintEvaluation.msg"
+  "msg/Exit.msg"
   "msg/Metric.msg"
+  "msg/Outcome.msg"
   "msg/SerializedData.msg"
+  "msg/TaskSpecification.msg"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
