@@ -63,7 +63,7 @@ class NavigateClient(Node):
         ros2 run rtr_navigate client 2.0 1.0 --ros-args --params-file <path>
     """
 
-    def __init__(self, action_name: str = "navigate_server") -> None:
+    def __init__(self, action_name: str = "navigate_attempt") -> None:
         super().__init__("navigate_client")
         self._client = ActionClient(self, TaskAttempt, action_name)
 
